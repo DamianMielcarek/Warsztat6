@@ -6,27 +6,34 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import pl.coderslab.entity.Tweet;
 import pl.coderslab.entity.User;
+import pl.coderslab.repository.TweetRepository;
 import pl.coderslab.repository.UserRepository;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
-@Controller()
-@RequestMapping(path = "/user")
+@Controller
+@RequestMapping(path = "user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(path = "/login")
+    @Autowired
+    private TweetRepository tweetRepository;
+
+    @GetMapping(path = "login")
     public String showLoginForm() {
         return "user/login";
     }
 
-    @PostMapping(path = "/login")
+    @PostMapping(path = "login")
     public String processLoginRequest(@RequestParam("username") String username,
-                                      @RequestParam("password") String password, Model model, HttpSession session) {
+                                      @RequestParam("password") String password,
+                                      HttpSession session) {
 //        User user = userRepository.findOneByUsernameAndPassword(username, password);
         User user = userRepository.findOneByUsername(username);
         if(user != null) {
@@ -34,8 +41,7 @@ public class UserController {
             boolean isPasswordCorrect = BCrypt.checkpw(password, passwordToCheck);
             if (isPasswordCorrect) {
                 session.setAttribute("user", user);
-                model.addAttribute("username", username);
-                return "user/success";
+                return "redirect:/";
             } else {
                 return "user/login";
             }
@@ -44,21 +50,21 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/logout")
+    @GetMapping(path = "logout")
     public String processLogoutRequest(HttpSession session) {
         session.removeAttribute("user");
         return "user/login";
     }
 
-    @GetMapping(path = "/register")
+    @GetMapping(path = "register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
         return "user/register";
     }
 
-    @PostMapping(path = "/register")
-    public String processRegistartionRequest(@Valid User user, BindingResult bresult) {
-        if(bresult.hasErrors()) {
+    @PostMapping(path = "register")
+    public String processRegistrationRequest(@Valid User user, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
             return "user/register";
         } else {
             userRepository.save(user);
@@ -66,7 +72,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/settings")
+    @GetMapping(path = "settings")
     public String showUserSettingsPage(Model model,
                                        @SessionAttribute(name = "user", required = false) User user) {
         if(user != null) {
@@ -75,6 +81,13 @@ public class UserController {
         } else {
             return "user/login";
         }
+    }
+
+    @GetMapping(path = "me")
+    public String userSite(@SessionAttribute(name = "user", required = false) User user, Model model) {
+        List<Tweet> tweets = tweetRepository.getTweetsByUserIdUsingQuery(user.getId());
+        model.addAttribute("tweets", tweets);
+        return "tweet/list";
     }
 
 }

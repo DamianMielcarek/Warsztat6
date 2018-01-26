@@ -24,7 +24,7 @@ public class HomePageController {
     @GetMapping(path = "/")
     public String index(@SessionAttribute(name = "user", required = false) User user, Model model) {
         if(user != null) {
-            List<Tweet> tweets = tweetRepository.getTweetsByUserIdUsingQuery(user.getId());
+            List<Tweet> tweets = tweetRepository.findAllByOrderByCreatedDesc();
             model.addAttribute("tweets", tweets);
 
             Tweet tweet = new Tweet();

@@ -19,4 +19,6 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 
     Tweet findOneById(@Param("id") long id);
 
+    List<Tweet> findAllByOrderByCreatedDesc();
+
 }

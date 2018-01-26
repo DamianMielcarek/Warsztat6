@@ -5,6 +5,6 @@
     <title>Insert title here</title>
 </head>
 <body>
-<h2>The user logged in successfully. Username: ${user.username} | User: ${user}</h2>
+<h2>The user registered successfully. Username: ${user.username}</h2>
 </body>
 </html>

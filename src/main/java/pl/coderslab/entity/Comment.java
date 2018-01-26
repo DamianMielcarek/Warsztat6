@@ -5,11 +5,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Tweet {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +16,14 @@ public class Tweet {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
-
-    @NotBlank
-    @Size(max = 140)
-    private String text;
+    @ManyToOne
+    private Tweet post;
 
     private LocalDateTime created;
+
+    @NotBlank
+    @Size(max = 60)
+    private String text;
 
     public Long getId() {
         return id;
@@ -43,20 +41,12 @@ public class Tweet {
         this.user = user;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public Tweet getPost() {
+        return post;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    public void setPost(Tweet post) {
+        this.post = post;
     }
 
     public LocalDateTime getCreated() {
@@ -67,12 +57,20 @@ public class Tweet {
         this.created = created;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public String toString() {
-        return "Tweet{" +
+        return "Comment{" +
                 "id=" + id +
-                ", text='" + text + '\'' +
                 ", created=" + created +
+                ", text='" + text + '\'' +
                 '}';
     }
 

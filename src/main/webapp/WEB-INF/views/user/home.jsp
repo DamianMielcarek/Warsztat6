@@ -27,18 +27,20 @@
     <tr>
         <th>text</th>
         <th>created</th>
-        <th>id</th>
+        <th>username</th>
         <th>details</th>
     </tr>
     <c:forEach items="${tweets}" var="tweet">
         <tr>
             <td>${tweet.text}</td>
             <td>${tweet.created}</td>
-            <td>${tweet.id}</td>
+            <td>${tweet.user.username}</td>
             <td><a href="<c:url value="/tweet/details/${tweet.id}"/>">more</a></td>
         </tr>
     </c:forEach>
 </table>
+
+<p><a href="<c:url value="/user/logout" />">Log Out</a></p>
 
 </body>
 </html>

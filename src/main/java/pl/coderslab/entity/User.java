@@ -1,10 +1,12 @@
 package pl.coderslab.entity;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +20,20 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Tweet> tweets = new ArrayList<>();
 
-    @NotEmpty
+    @NotNull
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String username;
 
-    @NotEmpty
+    @NotNull
+    @NotBlank
+    @Size(min = 1)
     @Column(nullable = false)
     private String password;
 
     private boolean enabled;
 
-    @NotEmpty
+    @NotBlank
     @Email
     @Column(nullable = false, unique = true)
     private String email;

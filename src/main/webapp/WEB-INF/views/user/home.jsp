@@ -8,6 +8,7 @@
 </head>
 <body>
 
+
 <h2><a href="<c:url value="/user/me" />">User's site</a></h2>
 
 <f:form action="/" method="post" modelAttribute="tweet">
@@ -34,13 +35,14 @@
         <tr>
             <td>${tweet.text}</td>
             <td>${tweet.created}</td>
-            <td>${tweet.user.username}</td>
+            <td><a href="<c:url value="/user/show?id=${tweet.user.id}"/>">${tweet.user.username}</a></td>
             <td><a href="<c:url value="/tweet/details/${tweet.id}"/>">more</a></td>
         </tr>
     </c:forEach>
 </table>
 
 <p><a href="<c:url value="/user/logout" />">Log Out</a></p>
+
 
 </body>
 </html>

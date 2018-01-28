@@ -63,15 +63,17 @@ public class UserController {
     }
 
     @PostMapping(path = "register")
-    public String processRegistrationRequest(@Valid User user, BindingResult bindingResult) {
+    public String processRegistrationRequest(@Valid User user, BindingResult bindingResult, HttpSession session) {
         if(bindingResult.hasErrors()) {
             return "user/register";
         } else {
             userRepository.save(user);
-            return "user/success";
+            session.setAttribute("user", user);
+            return "redirect:/";
         }
     }
 
+    //TODO write settings functionality (e.g. edit password)
     @GetMapping(path = "settings")
     public String showUserSettingsPage(Model model,
                                        @SessionAttribute(name = "user", required = false) User user) {
@@ -88,6 +90,26 @@ public class UserController {
         List<Tweet> tweets = tweetRepository.getTweetsByUserIdUsingQuery(user.getId());
         model.addAttribute("tweets", tweets);
         return "tweet/list";
+    }
+
+    @GetMapping(path = "show")
+    public String show(@SessionAttribute(name = "user", required = false) User user, Model model,
+                       @RequestParam("id") long id, HttpSession session) {
+        if (user != null) {
+            if (user.getId() == id) {
+                return "redirect:/user/me";
+            } else {
+                List<Tweet> tweets = tweetRepository.getTweetsByUserIdUsingQuery(id);
+                String username = userRepository.findOneById(id).getUsername();
+                User receiver = userRepository.findOneById(id);
+                session.setAttribute("receiver", receiver);
+                model.addAttribute("username", username);
+                model.addAttribute("tweets", tweets);
+                return "tweet/show";
+            }
+        } else {
+            return "user/login";
+        }
     }
 
 }

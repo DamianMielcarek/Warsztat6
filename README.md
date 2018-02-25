@@ -1,4 +1,4 @@
-# Warsztat6
+# Workshop_6
 
 Twitter like application.
 
